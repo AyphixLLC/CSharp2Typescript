@@ -84,8 +84,10 @@ namespace CSharp2Typescript {
                 b.Append($"export namespace {ns.Name} {{\n");
                 foreach(TSClass clas in ns.Classes) {
                     string extends = (clas.BaseClass != String.Empty) ? "extends " + clas.BaseClass : "";
+                    string generics = String.Join(",", clas.Generics.ToArray());
+                    string genericString = (clas.Generics.Count > 0) ? "<" + generics + ">" : null;
 
-                    b.Append($"\texport declare class {clas.Name} {extends} {{\n");
+                    b.Append($"\texport declare class {clas.Name} {extends}{genericString} {{\n");
 
                     foreach (TSMember mem in clas.Members) {
                         b.Append($"\t\t{mem.Name}: {mem.Type};\n");
@@ -128,6 +130,10 @@ namespace CSharp2Typescript {
                 return "number";
             }
 
+            if(type == "Byte") {
+                return "number";
+            }
+
             if(type == "Boolean") {
                 return "boolean";
             }
@@ -138,6 +144,14 @@ namespace CSharp2Typescript {
 
             if(type == "Void") {
                 return "void";
+            }
+
+            if(type == "IntPtr") {
+                return "number";
+            }
+
+            if(type == "char" || type == "Char") {
+                return "string";
             }
 
             if (type == "IEnumerable") {
